@@ -12,8 +12,7 @@ library(scales)
 library(ggpubr)
 
 # upload data----
-data <- read_delim("/Users/Marta/Documenti/EcoInformatics/editorial/editorialdata_2211.csv",
-                 delim = ";")
+data <- read_delim("*your directory*", delim = ";")
 
 #overall stats for the text-----
 # DATA ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
