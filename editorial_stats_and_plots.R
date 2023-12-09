@@ -12,7 +12,8 @@ library(scales)
 library(ggpubr)
 
 # upload data----
-data <- read_delim("*your directory*", delim = ";")
+data <- read_delim("/Users/Marta/Documenti/EcoInformatics/editorial/editorialdata_2211.csv",
+                 delim = ";")
 
 #overall stats for the text-----
 # DATA ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -27,38 +28,40 @@ data %>%
   group_by(journal) %>% # to get overall availability, remove grouping by silencing this line
   count(data_avail) %>% 
   mutate(freq = n / sum(n)) %>% 
-  filter(data_avail == 1) # only show avail == 1
+  filter(data_avail == 1) %>%  # only show avail == 1
+  mutate(freqperc = round(freq*100, digits = 1))
 
 # overall (or per journal) data *accessibility* 
 data %>%
-  filter(data_avail == 1) %>% # filtering for available data
+  filter(!is.na(data_avail)) %>% # filtering for available data
   group_by(journal) %>%  # to get overall accessibility, remove grouping by silencing this line
   count(data_access) %>% 
   mutate(freq = n / sum(n)) %>% 
-  filter(data_access == 1) # only show access == 1
-
+  filter(data_access == 1) %>%  # only show access == 1
+  mutate(freqperc = round(freq*100, digits = 1))
 
 # CODE ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # overall (or per journal) code *availability* 
 data %>%
   filter(!is.na(code_avail)) %>% #removing NAs
-  #group_by(journal) %>% 
+  group_by(journal) %>% 
   count(code_avail) %>% 
   mutate(freq = n / sum(n)) %>% 
-  filter(code_avail == 1) # only show avail == 1
+  filter(code_avail == 1) %>%  # only show avail == 1
+  mutate(freqperc = round(freq*100, digits = 1))
 
-
-# overall code accessibility per journal
+# overall (or per journal) code *accessibility* 
 data %>%
-  filter(code_avail == 1) %>% # filtering for available data
-  group_by(journal) %>% # remove grouping to get overall availability
+  filter(!is.na(code_avail)) %>% # #removing NAs
+  group_by(journal) %>%  # to get overall accessibility, remove grouping by silencing this line
   count(code_access) %>% 
   mutate(freq = n / sum(n)) %>% 
-  filter(code_access == 1) # only show access == 1
+  filter(code_access == 1) %>%  # only show access == 1
+  mutate(freqperc = round(freq*100, digits = 1))
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Reasons for data or code not accessible 
-# reasons for data not accessible
+# reasons for *data* not accessible
 data %>% 
 select(-c(code_avail:code_private_repo, archiving_loc)) %>% 
   filter(data_avail == 1 & data_access == 0) %>% # filtering for available but not accessible data
@@ -69,7 +72,7 @@ select(-c(code_avail:code_private_repo, archiving_loc)) %>%
          perc_private = data_private_repo/data_avail,
          perc_other = other_reas/data_avail)
   
-# reasons for code not accessible
+# reasons for *code* not accessible
 data %>% 
   select(-c(data_avail:data_private_repo, archiving_loc)) %>% 
   filter(code_avail == 1 & code_access == 0) %>% # filtering for available but not accessible code
@@ -111,8 +114,9 @@ data_stats %>%
               select(-code_avail)) %>% 
   ungroup() %>% 
   group_by(type) %>% 
-  #slice_min(n = 1, order_by = freq) #%>% # to have the minimum percentages
-  slice_max(n = 1, order_by = freq)
+  #slice_min(n = 1, order_by = freq) %>% # to have the minimum percentages
+  slice_max(n = 1, order_by = freq) %>% 
+  mutate(freqperc = round(freq*100, digits = 1))
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # comparing DATA availability in the period 2015-2018 vs 2020-2023
